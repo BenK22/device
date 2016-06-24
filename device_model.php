@@ -308,7 +308,13 @@ class Device
             // Create each feed
             $name = $f->name;
             if (property_exists($f, "tag")) {
-                $tag = $f->tag;
+		$tag = '';
+
+		if(property_exists($f, "include_node")) {
+		    $tag .= $node . ' ';
+		}
+
+                $tag .= $f->tag;
             } else {
                 $tag = $node;
             }
@@ -388,7 +394,8 @@ class Device
 
         foreach($feedArray as $f) {
             // for each feed
-            if (($f->engine == Engine::VIRTUALFEED) && isset($f->processList)) {
+            $type = @constant($f->engine);
+            if (($type === Engine::VIRTUALFEED) && isset($f->processList)) {
                 $feedId = $f->feedId;
                 $result = $this->convertTemplateProcessList($feedArray, $inputArray, $f->processList);
                 if (isset($result["success"])) {
